@@ -1,0 +1,53 @@
+name: Auto-bump formulae
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
+  workflow_dispatch:
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Check and bump ssh-to-age
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          brew tap ${{ github.repository }} "$(pwd)"
+          brew livecheck --formula ssh-to-age --tap "$(echo ${{ github.repository }} | sed 's|/homebrew-|/|')" --json | tee livecheck.json
+
+          CURRENT=$(jq -r '.[0].version.current' livecheck.json)
+          LATEST=$(jq -r '.[0].version.latest' livecheck.json)
+          OUTDATED=$(jq -r '.[0].version.outdated' livecheck.json)
+
+          echo "Current: $CURRENT, Latest: $LATEST, Outdated: $OUTDATED"
+
+          if [ "$OUTDATED" != "true" ]; then
+            echo "Already up to date."
+            exit 0
+          fi
+
+          echo "Bumping ssh-to-age from $CURRENT to $LATEST"
+
+          NEW_URL="https://github.com/Mic92/ssh-to-age/archive/refs/tags/v${LATEST}.tar.gz"
+          NEW_SHA=$(curl -sL "$NEW_URL" | shasum -a 256 | awk '{print $1}')
+
+          sed -i "s|url \".*\"|url \"${NEW_URL}\"|" Formula/ssh-to-age.rb
+          sed -i "s|sha256 \".*\"|sha256 \"${NEW_SHA}\"|" Formula/ssh-to-age.rb
+
+          echo "updated=true" >> "$GITHUB_ENV"
+          echo "new_version=$LATEST" >> "$GITHUB_ENV"
+
+      - name: Commit and push
+        if: env.updated == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/ssh-to-age.rb
+          git commit -m "ssh-to-age: bump to ${new_version}"
+          git push
