@@ -34,7 +34,7 @@ jobs:
 
           echo "Bumping ssh-to-age from $CURRENT to $LATEST"
 
-          NEW_URL="https://github.com/Mic92/ssh-to-age/archive/refs/tags/v${LATEST}.tar.gz"
+          NEW_URL="https://github.com/Mic92/ssh-to-age/archive/refs/tags/${LATEST}.tar.gz"
           NEW_SHA=$(curl -sL "$NEW_URL" | shasum -a 256 | awk '{print $1}')
 
           sed -i "s|url \".*\"|url \"${NEW_URL}\"|" Formula/ssh-to-age.rb

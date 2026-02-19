@@ -1,12 +1,11 @@
-# Homebrew Tap: ssh-to-age
+# homebrew-tap
 
 Homebrew tap for [ssh-to-age](https://github.com/Mic92/ssh-to-age) — a tool to convert SSH Ed25519 keys to age keys.
 
 ## Installation
 
 ```bash
-brew tap baboons/ssh-to-age https://github.com/baboons/brew-ssh-to-age
-brew install baboons/ssh-to-age/ssh-to-age
+brew install baboons/tap/ssh-to-age
 ```
 
 ## Usage

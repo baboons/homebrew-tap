@@ -1,8 +1,8 @@
 class SshToAge < Formula
   desc "Convert SSH keys to age keys"
   homepage "https://github.com/Mic92/ssh-to-age"
-  url "https://github.com/Mic92/ssh-to-age/archive/refs/tags/v1.1.5.tar.gz"
-  sha256 "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed"
+  url "https://github.com/Mic92/ssh-to-age/archive/refs/tags/1.2.0.tar.gz"
+  sha256 "253ba51a8224371019efb95ec0164f7b1a35413e4473fe0135aed320e09f0671"
   license "MIT"
 
   livecheck do
