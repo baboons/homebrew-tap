@@ -1,0 +1,85 @@
+name: Bump zorro cask
+
+on:
+  # Poll daily in case we miss a release dispatch.
+  schedule:
+    - cron: "0 9 * * *"
+  # Run by hand from the Actions tab.
+  workflow_dispatch:
+  # Let the zorro repo trigger an instant bump on release:
+  #   gh api repos/baboons/homebrew-tap/dispatches \
+  #     -f event_type=zorro-release
+  repository_dispatch:
+    types: [zorro-release]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bump-cask
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tap
+        uses: actions/checkout@v4
+
+      - name: Resolve latest zorro release
+        id: latest
+        env:
+          # Needs repo:read on baboons/zorro. The default GITHUB_TOKEN works
+          # while zorro is public; if it goes private, swap in a PAT secret.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag=$(gh api repos/baboons/zorro/releases/latest --jq .tag_name)
+          echo "tag=$tag"              >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}"      >> "$GITHUB_OUTPUT"
+
+      - name: Read current cask version
+        id: current
+        run: |
+          current=$(grep -E '^\s*version ' Casks/zorro.rb | sed -E 's/.*version "([^"]+)".*/\1/')
+          echo "version=$current" >> "$GITHUB_OUTPUT"
+
+      - name: Decide whether to update
+        id: decide
+        run: |
+          if [ "${{ steps.latest.outputs.version }}" != "${{ steps.current.outputs.version }}" ]; then
+            echo "needs_update=true" >> "$GITHUB_OUTPUT"
+          elif grep -qE '^\s*sha256 :no_check' Casks/zorro.rb; then
+            # Version matches but the sha is still unpinned: pin it now.
+            echo "needs_update=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_update=false" >> "$GITHUB_OUTPUT"
+            echo "Cask already at ${{ steps.current.outputs.version }} with a pinned sha; nothing to do."
+          fi
+
+      - name: Download asset and compute sha256
+        if: steps.decide.outputs.needs_update == 'true'
+        id: sha
+        run: |
+          url="https://github.com/baboons/zorro/releases/download/${{ steps.latest.outputs.tag }}/Zorro-aarch64-apple-darwin.zip"
+          curl -fL --retry 3 -o asset.zip "$url"
+          sha=$(sha256sum asset.zip | cut -d' ' -f1)
+          echo "sha256=$sha" >> "$GITHUB_OUTPUT"
+
+      - name: Rewrite cask
+        if: steps.decide.outputs.needs_update == 'true'
+        run: |
+          sed -i -E "s|^(\s*)version .*|\1version \"${{ steps.latest.outputs.version }}\"|" Casks/zorro.rb
+          sed -i -E "s|^(\s*)sha256 .*|\1sha256 \"${{ steps.sha.outputs.sha256 }}\"|" Casks/zorro.rb
+
+      - name: Commit and push
+        if: steps.decide.outputs.needs_update == 'true'
+        run: |
+          if git diff --quiet -- Casks/zorro.rb; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/zorro.rb
+          git commit -m "chore: bump zorro to ${{ steps.latest.outputs.version }}"
+          git push

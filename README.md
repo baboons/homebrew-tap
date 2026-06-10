@@ -1,8 +1,19 @@
 # homebrew-tap
 
-Homebrew tap for [ssh-to-age](https://github.com/Mic92/ssh-to-age) — a tool to convert SSH Ed25519 keys to age keys.
+Homebrew tap for Baboons tools.
 
-## Installation
+## Casks
+
+### [Zorro](https://github.com/baboons/zorro) — native macOS Git merge-conflict resolver
+
+```bash
+brew install --cask baboons/tap/zorro
+brew upgrade --cask zorro
+```
+
+## Formulae
+
+### [ssh-to-age](https://github.com/Mic92/ssh-to-age) — convert SSH Ed25519 keys to age keys
 
 ```bash
 brew install baboons/tap/ssh-to-age
