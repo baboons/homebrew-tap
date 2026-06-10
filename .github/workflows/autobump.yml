@@ -18,7 +18,9 @@ jobs:
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          brew tap ${{ github.repository }} "$(pwd)"
+          TAP_DIR="$(brew --repository)/Library/Taps/${{ github.repository }}"
+          mkdir -p "$(dirname "$TAP_DIR")"
+          ln -sfn "$(pwd)" "$TAP_DIR"
           brew livecheck --formula ssh-to-age --tap "$(echo ${{ github.repository }} | sed 's|/homebrew-|/|')" --json | tee livecheck.json
 
           CURRENT=$(jq -r '.[0].version.current' livecheck.json)
