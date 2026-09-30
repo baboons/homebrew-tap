@@ -11,6 +11,14 @@ brew install --cask baboons/tap/zorro
 brew upgrade --cask zorro
 ```
 
+### [CmdTab](https://github.com/baboons/cmdtab) — ⌘Tab replacement with window previews and type-to-search
+
+```bash
+brew install --cask baboons/tap/cmdtab
+```
+
+CmdTab updates itself, so `brew upgrade` skips it unless you pass `--greedy`.
+
 ## Formulae
 
 ### [ssh-to-age](https://github.com/Mic92/ssh-to-age) — convert SSH Ed25519 keys to age keys
