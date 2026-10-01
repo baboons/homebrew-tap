@@ -1,6 +1,6 @@
 cask "cmdtab" do
-  version "0.1.0"
-  sha256 "3a3a4f33745e5301e2edb0d3be8bf0eb2ad3d5e3067bfe185ab0d457471d69ff"
+  version "0.2.0"
+  sha256 "0c8afa8c4cddba3274bb70a8808c5d9126ff3d80a2fdc60b1055a679f85181f1"
 
   url "https://github.com/baboons/cmdtab/releases/download/v#{version}/CmdTab-aarch64-apple-darwin.zip"
   name "CmdTab"
