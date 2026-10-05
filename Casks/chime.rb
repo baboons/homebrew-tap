@@ -1,6 +1,6 @@
 cask "chime" do
-  version "0.2.0"
-  sha256 "684119d0607baa5f766711d5839aee588da5afa984d6933d825ce69da4fb8fb8"
+  version "0.3.0"
+  sha256 "5368b5dc0616d3cce8c01f8ca1306113966ec1b30b742119806563f66f9b6581"
 
   url "https://github.com/baboons/chime/releases/download/v#{version}/Chime-aarch64-apple-darwin.zip"
   name "Chime"
