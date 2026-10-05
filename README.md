@@ -28,6 +28,13 @@ brew upgrade --cask baboons/tap/chime
 
 Use the full `baboons/tap/chime` name: Homebrew's own `chime` cask is a different app.
 
+### [Snipster](https://github.com/baboons/snipster) — fast screenshots with annotations, window frames and scrolling capture
+
+```bash
+brew install --cask baboons/tap/snipster
+brew upgrade --cask snipster
+```
+
 ## Formulae
 
 ### [ssh-to-age](https://github.com/Mic92/ssh-to-age) — convert SSH Ed25519 keys to age keys
