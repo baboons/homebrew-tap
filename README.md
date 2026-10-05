@@ -19,6 +19,15 @@ brew install --cask baboons/tap/cmdtab
 
 CmdTab updates itself, so `brew upgrade` skips it unless you pass `--greedy`.
 
+### [Chime](https://github.com/baboons/chime) — shows your apps in the menu bar when they have notifications
+
+```bash
+brew install --cask baboons/tap/chime
+brew upgrade --cask baboons/tap/chime
+```
+
+Use the full `baboons/tap/chime` name: Homebrew's own `chime` cask is a different app.
+
 ## Formulae
 
 ### [ssh-to-age](https://github.com/Mic92/ssh-to-age) — convert SSH Ed25519 keys to age keys
